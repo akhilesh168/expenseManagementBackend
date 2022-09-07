@@ -93,3 +93,5 @@ app.get('/expenses/:id', (req, res) => {
     return;
   });
 });
+
+module.exports = app;
