@@ -21,13 +21,15 @@ const client = new MongoClient(uri, {
 });
 async function insert(client) {
   try {
+    console.log('1');
     await client.connect();
+    console.log('2');
     trips = client.db('tripcost').collection('trips');
     // perform actions on the collection object
     expenses = client.db('tripcost').collection('expenses');
     console.log('Done');
   } finally {
-    await client.close();
+    // await client.close();
   }
 }
 insert(client).catch(console.dir);
