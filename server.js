@@ -32,9 +32,11 @@ async function insert(client) {
     // await client.close();
   }
 }
-insert(client).catch(console.dir);
 
 app.post('/trip', async (req, res) => {
+  await client.connect();
+    trips = client.db('tripcost').collection('trips');
+    expenses = client.db('tripcost').collection('expenses');
   const name = req.body.name;
   await trips.insertOne({ name: name }, (err, result) => {
     if (err) {
@@ -46,7 +48,10 @@ app.post('/trip', async (req, res) => {
     res.status(200).json({ ok: true });
   });
 });
-app.get('/trips', (req, res) => {
+app.get('/trips', async (req, res) => {
+ await client.connect();
+    trips = client.db('tripcost').collection('trips');
+    expenses = client.db('tripcost').collection('expenses');
   trips.find().toArray((err, items) => {
     if (err) {
       res.status(500).json({ err: err });
@@ -59,6 +64,9 @@ app.get('/trips', (req, res) => {
 });
 
 app.post('/expense', async (req, res) => {
+   await client.connect();
+    trips = client.db('tripcost').collection('trips');
+    expenses = client.db('tripcost').collection('expenses');
   await expenses.insertOne(
     {
       trip: req.body.trip,
@@ -79,6 +87,9 @@ app.post('/expense', async (req, res) => {
   );
 });
 app.get('/expenses', (req, res) => {
+   await client.connect();
+    trips = client.db('tripcost').collection('trips');
+    expenses = client.db('tripcost').collection('expenses');
   expenses.find().toArray((err, items) => {
     if (err) {
       console.log(err);
@@ -91,6 +102,9 @@ app.get('/expenses', (req, res) => {
   });
 });
 app.get('/expenses/:id', (req, res) => {
+  await client.connect();
+    trips = client.db('tripcost').collection('trips');
+    expenses = client.db('tripcost').collection('expenses');
   expenses.find({ trip: req.params.id }).toArray((err, items) => {
     if (err) {
       console.log(err);
