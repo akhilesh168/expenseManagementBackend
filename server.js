@@ -13,21 +13,28 @@ app.use(cors());
 const uri =
   'mongodb+srv://Akhil:1234@cluster0.mgkcy.mongodb.net/?retryWrites=true&w=majority';
 const client = new MongoClient(uri, {
+  connectTimeoutMS: 30000,
+  keepAlive: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-client.connect((err) => {
-  trips = client.db('tripcost').collection('trips');
-  // perform actions on the collection object
-  expenses = client.db('tripcost').collection('expenses');
+async function insert(client) {
+  try {
+    await client.connect();
+    trips = client.db('tripcost').collection('trips');
+    // perform actions on the collection object
+    expenses = client.db('tripcost').collection('expenses');
+    console.log('Done');
+  } finally {
+    await client.close();
+  }
+}
+insert(client).catch(console.dir);
 
-  // client.close();
-});
-
-app.post('/trip', (req, res) => {
+app.post('/trip', async (req, res) => {
   const name = req.body.name;
-  trips.insertOne({ name: name }, (err, result) => {
+  await trips.insertOne({ name: name }, (err, result) => {
     if (err) {
       console.log(err);
       res.status(500).json({ err: err });
@@ -49,8 +56,8 @@ app.get('/trips', (req, res) => {
   });
 });
 
-app.post('/expense', (req, res) => {
-  expenses.insertOne(
+app.post('/expense', async (req, res) => {
+  await expenses.insertOne(
     {
       trip: req.body.trip,
       category: req.body.category,
