@@ -36,7 +36,7 @@ router.get('/expenses', (req, res) => {
 
 router.get('/expenses/:id', (req, res) => {
   expenses
-    .find({})
+    .find({ trip: req.params.id })
     .then((items) => {
       return res.status(200).json({ expenses: items });
     })
